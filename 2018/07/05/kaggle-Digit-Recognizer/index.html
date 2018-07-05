@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="machine learning,keras,CNN,mnist," />
+  <meta name="keywords" content="machine learning,keras,CNN," />
 
 
 
@@ -80,17 +80,22 @@
 
 
 <meta name="description" content="A Machine Learning Project for Beginners">
-<meta name="keywords" content="machine learning,keras,CNN,mnist">
+<meta name="keywords" content="machine learning,keras,CNN">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[kaggle]Digit Recognizer(acc 99.61%, top 10%)">
-<meta property="og:url" content="http://yoursite.com/2018/07/04/kaggle-Digit-Recognizer-acc-99-61-top-10/index.html">
+<meta property="og:url" content="http://yoursite.com/2018/07/05/kaggle-Digit-Recognizer/index.html">
 <meta property="og:site_name" content="Embrace Randomness">
 <meta property="og:description" content="A Machine Learning Project for Beginners">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2018-07-04T08:38:05.143Z">
+<meta property="og:image" content="http://yoursite.com/2018/07/05/kaggle-Digit-Recognizer/plot.png">
+<meta property="og:image" content="http://yoursite.com/2018/07/05/kaggle-Digit-Recognizer/vgg.png">
+<meta property="og:image" content="http://yoursite.com/2018/07/05/kaggle-Digit-Recognizer/loss.png">
+<meta property="og:image" content="http://yoursite.com/2018/07/05/kaggle-Digit-Recognizer/accuracy.png">
+<meta property="og:updated_time" content="2018-07-05T12:21:40.077Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="[kaggle]Digit Recognizer(acc 99.61%, top 10%)">
 <meta name="twitter:description" content="A Machine Learning Project for Beginners">
+<meta name="twitter:image" content="http://yoursite.com/2018/07/05/kaggle-Digit-Recognizer/plot.png">
 
 
 
@@ -120,7 +125,7 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2018/07/04/kaggle-Digit-Recognizer-acc-99-61-top-10/"/>
+  <link rel="canonical" href="http://yoursite.com/2018/07/05/kaggle-Digit-Recognizer/"/>
 
 
 
@@ -287,7 +292,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/04/kaggle-Digit-Recognizer-acc-99-61-top-10/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/05/kaggle-Digit-Recognizer/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="FlouriteJ">
@@ -316,8 +321,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-07-04T13:00:40+08:00">
-                2018-07-04
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-07-05T20:00:00+08:00">
+                2018-07-05
               </time>
             
 
@@ -380,7 +385,47 @@
       
 
       
-        <h1 id="Environment"><a href="#Environment" class="headerlink" title="Environment"></a>Environment</h1><p>Ubuntu==16.04.4<br>python==3.5<br>keras==2.2.0<br>tensorflow-gpu==1.8.0</p>
+        <h1 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h1><p>This project is a solution of a kaggle contest - <a href="https://www.kaggle.com/c/digit-recognize" target="_blank" rel="noopener">Digit Recognizer</a>, which aims at recognizing single hand-writing digit. The solution is based on RNN and transfer-learning, results in the accuracy of 99.61%(with transfer-learning),as a score of top 10%, and 99.40%(without transfer-learning). </p>
+<p>I believe this is the best solution without over-fitting or more relative data, such as the <a href="https://www.nist.gov/itl/iad/image-group/emnist-dataset" target="_blank" rel="noopener">EMNIST</a> dataset and even whole MNIST dataset. Considering the test data, which comes from MNIST, is public and labeled, I wonder whether the 99.9%+ solution is kind of over-fitting to the MINST dataset. If you got a better idea, please share as a comment below.</p>
+<p>To avoid over-fitting, I used lots of dropout-layers and batchnorm-layers. Also, I submit my solution only one time for each model,</p>
+<p>You can find the ipynb version full code in my <a href="https://github.com/FlouriteJ" target="_blank" rel="noopener">github</a>.</p>
+<h1 id="Environment"><a href="#Environment" class="headerlink" title="Environment"></a>Environment</h1><p>Jupyter Notebook<br>Ubuntu 16.04.4<br>GeForce GTX 1080 Ti<br>python==3.5<br>keras==2.2.0<br>tensorflow-gpu==1.8.0</p>
+<p>Caution! I strongly suggest you use the latest published keras, or later than version 2.1.2, because the sooner version used different functions and <strong>some bugs existed</strong> (such as bad preprocessing_function = preprocess_input, and flow_from_directory)<br>Jupyter notebook is recommended. It is easier for you to debug, check intermediate variable, and visualization.<br>Additionally, I suggest you use GPU(s) instead of CPU, for the former one is much more faster in training.</p>
+<h1 id="RNN-without-transfer-learning-for-beginners"><a href="#RNN-without-transfer-learning-for-beginners" class="headerlink" title="RNN without transfer-learning (for beginners)"></a>RNN without transfer-learning (for beginners)</h1><h2 id="Features"><a href="#Features" class="headerlink" title="Features"></a>Features</h2><blockquote>
+<ul>
+<li>vgg-liked architecture</li>
+<li>data augmentation</li>
+<li>visualization</li>
+<li>data generator</li>
+<li>confusion matrix</li>
+</ul>
+</blockquote>
+<h2 id="Data-Pre-processing"><a href="#Data-Pre-processing" class="headerlink" title="Data Pre-processing"></a>Data Pre-processing</h2><p>Import packages and set paths.<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line">%matplotlib inline</span><br><span class="line"><span class="keyword">from</span> keras.models <span class="keyword">import</span> Sequential</span><br><span class="line"><span class="keyword">from</span> keras.layers <span class="keyword">import</span> Dense, Dropout, Flatten, Conv2D, MaxPool2D, BatchNormalization</span><br><span class="line"><span class="keyword">from</span> keras.optimizers <span class="keyword">import</span> Adam</span><br><span class="line"><span class="keyword">from</span> keras.utils.np_utils <span class="keyword">import</span> to_categorical <span class="comment"># convert to one-hot-encoding</span></span><br><span class="line"><span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> train_test_split</span><br><span class="line"><span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> confusion_matrix</span><br><span class="line"><span class="keyword">from</span> keras.preprocessing.image <span class="keyword">import</span> ImageDataGenerator</span><br><span class="line"><span class="keyword">from</span> keras.callbacks <span class="keyword">import</span> LearningRateScheduler</span><br><span class="line"></span><br><span class="line">train_file = <span class="string">"./input/train.csv"</span></span><br><span class="line">test_file = <span class="string">"./input/test.csv"</span></span><br><span class="line">output_file = <span class="string">"./output/submission.csv"</span></span><br></pre></td></tr></table></figure></p>
+<p>Load the data and split train/dev.<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">raw_data = np.loadtxt(train_file, skiprows=<span class="number">1</span>, dtype=<span class="string">'int'</span>, delimiter=<span class="string">','</span>)</span><br><span class="line">x_train, x_dev, y_train, y_dev = train_test_split(raw_data[:,<span class="number">1</span>:], raw_data[:,<span class="number">0</span>], test_size=<span class="number">0.1</span>,random_state=<span class="number">0</span>)</span><br></pre></td></tr></table></figure></p>
+<p>Visualize the data.<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">fig, ax = plt.subplots(<span class="number">2</span>, <span class="number">1</span>, figsize=(<span class="number">12</span>,<span class="number">6</span>))</span><br><span class="line">ax[<span class="number">0</span>].plot(x_train[<span class="number">0</span>])</span><br><span class="line">ax[<span class="number">0</span>].set_title(<span class="string">'784x1 data'</span>)</span><br><span class="line">ax[<span class="number">1</span>].imshow(x_train[<span class="number">0</span>].reshape(<span class="number">28</span>,<span class="number">28</span>),cmap=<span class="string">'gray'</span>)</span><br><span class="line">ax[<span class="number">1</span>].set_title(<span class="string">'28x28 data'</span>)</span><br></pre></td></tr></table></figure></p>
+<img src="/2018/07/05/kaggle-Digit-Recognizer/plot.png" title="train-set">
+<p>Normalize the data from [0,255] to [1, 0].<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">x_train = x_train.reshape(<span class="number">-1</span>,<span class="number">28</span>,<span class="number">28</span>,<span class="number">1</span>)</span><br><span class="line">x_dev = x_dev.reshape(<span class="number">-1</span>,<span class="number">28</span>,<span class="number">28</span>,<span class="number">1</span>)</span><br><span class="line">x_train = x_train.astype(<span class="string">"float32"</span>)/<span class="number">255.0</span></span><br><span class="line">x_dev = x_dev.astype(<span class="string">"float32"</span>)/<span class="number">255.0</span></span><br><span class="line">y_train = to_categorical(y_train)</span><br><span class="line">y_dev = to_categorical(y_dev)</span><br></pre></td></tr></table></figure></p>
+<h2 id="Define-the-model"><a href="#Define-the-model" class="headerlink" title="Define the model"></a>Define the model</h2><p>Inspired by vgg, I used the 11-layer sequential model below as a small version of vgg.<br><img src="/2018/07/05/kaggle-Digit-Recognizer/vgg.png" title="vgg model"><br>In fact, vgg is too large for the competition, becasue it is hard to train and reducing its size will not hurt accuracy.<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">model = Sequential()</span><br><span class="line">model.add(Conv2D(filters = <span class="number">32</span>, kernel_size = (<span class="number">5</span>, <span class="number">5</span>),padding=<span class="string">'same'</span>, activation=<span class="string">'relu'</span>,input_shape = (<span class="number">28</span>, <span class="number">28</span>, <span class="number">1</span>)))</span><br><span class="line">model.add(BatchNormalization())</span><br><span class="line">model.add(Conv2D(filters = <span class="number">32</span>, kernel_size = (<span class="number">5</span>, <span class="number">5</span>),padding=<span class="string">'same'</span>, activation=<span class="string">'relu'</span>))</span><br><span class="line">model.add(BatchNormalization())</span><br><span class="line">model.add(Dropout(<span class="number">0.25</span>))</span><br><span class="line">model.add(MaxPool2D((<span class="number">2</span>, <span class="number">2</span>), strides=(<span class="number">2</span>, <span class="number">2</span>)))</span><br><span class="line"></span><br><span class="line">model.add(Conv2D(filters = <span class="number">64</span>, kernel_size = (<span class="number">3</span>, <span class="number">3</span>),padding=<span class="string">'same'</span>, activation=<span class="string">'relu'</span>))</span><br><span class="line">model.add(BatchNormalization())</span><br><span class="line">model.add(Conv2D(filters = <span class="number">64</span>, kernel_size = (<span class="number">3</span>, <span class="number">3</span>),padding=<span class="string">'same'</span>, activation=<span class="string">'relu'</span>))</span><br><span class="line">model.add(BatchNormalization())</span><br><span class="line">model.add(Dropout(<span class="number">0.25</span>))</span><br><span class="line">model.add(MaxPool2D((<span class="number">2</span>, <span class="number">2</span>), strides=(<span class="number">2</span>, <span class="number">2</span>)))</span><br><span class="line"></span><br><span class="line">model.add(Flatten())</span><br><span class="line">model.add(Dense(<span class="number">2048</span>, activation=<span class="string">'relu'</span>))</span><br><span class="line">model.add(Dropout(<span class="number">0.25</span>))</span><br><span class="line">model.add(Dense(<span class="number">512</span>, activation=<span class="string">'relu'</span>))</span><br><span class="line">model.add(Dropout(<span class="number">0.25</span>))</span><br><span class="line">model.add(Dense(<span class="number">128</span>, activation=<span class="string">'relu'</span>))</span><br><span class="line">model.add(Dropout(<span class="number">0.25</span>))</span><br><span class="line">model.add(Dense(<span class="number">10</span>, activation=<span class="string">'softmax'</span>))</span><br><span class="line"></span><br><span class="line">annealer = LearningRateScheduler(<span class="keyword">lambda</span> x: <span class="number">1e-3</span> * <span class="number">0.9</span> ** x)</span><br></pre></td></tr></table></figure></p>
+<p>The original train set is relatively small, so you need augment it for more data.<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">augmented_data_generator = ImageDataGenerator(zoom_range = <span class="number">0.1</span>,</span><br><span class="line">                            height_shift_range = <span class="number">0.1</span>,</span><br><span class="line">                            width_shift_range = <span class="number">0.1</span>,</span><br><span class="line">                            rotation_range = <span class="number">10</span>)</span><br></pre></td></tr></table></figure></p>
+<h2 id="Compile-and-train-the-model"><a href="#Compile-and-train-the-model" class="headerlink" title="Compile and train the model"></a>Compile and train the model</h2><p>I used about 10 minutes to train 30 epochs.<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">model.compile(loss=<span class="string">'categorical_crossentropy'</span>, optimizer = Adam(lr=<span class="number">1e-4</span>), metrics=[<span class="string">"accuracy"</span>])</span><br><span class="line">hist = model.fit_generator(augmented_data_generator.flow(x_train, y_train, batch_size=<span class="number">64</span>),</span><br><span class="line">                           steps_per_epoch=<span class="number">1024</span>,</span><br><span class="line">                           epochs=<span class="number">30</span>,</span><br><span class="line">                           verbose=<span class="number">1</span>,  <span class="comment"># 0 = silent, 1 = progress bar, 2 = one line per epoch.</span></span><br><span class="line">                           validation_data=(x_dev, y_dev),</span><br><span class="line">                           callbacks=[annealer])</span><br></pre></td></tr></table></figure></p>
+<h2 id="Check-the-training-process"><a href="#Check-the-training-process" class="headerlink" title="Check the training process"></a>Check the training process</h2><p>Print loss and accuracy curves.<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">final_loss, final_acc = model.evaluate(x_dev, y_dev, verbose=<span class="number">0</span>)</span><br><span class="line">print(<span class="string">"Final loss: &#123;0:.4f&#125;, final accuracy: &#123;1:.4f&#125;"</span>.format(final_loss, final_acc))</span><br></pre></td></tr></table></figure></p>
+<img src="/2018/07/05/kaggle-Digit-Recognizer/loss.png" title="loss">
+<img src="/2018/07/05/kaggle-Digit-Recognizer/accuracy.png" title="accuracy">
+<p>Print confusion matrix.<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">y_hat = model.predict(x_dev)</span><br><span class="line">y_pred = np.argmax(y_hat, axis=<span class="number">1</span>)</span><br><span class="line">y_true = np.argmax(y_dev, axis=<span class="number">1</span>)</span><br><span class="line">cm = confusion_matrix(y_true, y_pred)</span><br><span class="line">print(cm)</span><br></pre></td></tr></table></figure></p>
+<h2 id="Predict-and-save-the-result"><a href="#Predict-and-save-the-result" class="headerlink" title="Predict and save the result"></a>Predict and save the result</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">mnist_testset = np.loadtxt(test_file, skiprows=<span class="number">1</span>, dtype=<span class="string">'int'</span>, delimiter=<span class="string">','</span>)</span><br><span class="line">x_test = mnist_testset.astype(<span class="string">"float32"</span>)</span><br><span class="line">x_test = x_test.reshape(<span class="number">-1</span>, <span class="number">28</span>, <span class="number">28</span>, <span class="number">1</span>)/<span class="number">255.</span></span><br><span class="line">y_hat = model.predict(x_test, batch_size=<span class="number">64</span>)</span><br><span class="line">y_pred = np.argmax(y_hat,axis=<span class="number">1</span>)</span><br><span class="line"><span class="keyword">with</span> open(output_file, <span class="string">'w'</span>) <span class="keyword">as</span> f :</span><br><span class="line">    f.write(<span class="string">'ImageId,Label\n'</span>)</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(len(y_pred)) :</span><br><span class="line">        f.write(<span class="string">""</span>.join([str(i+<span class="number">1</span>),<span class="string">','</span>,str(y_pred[i]),<span class="string">'\n'</span>]))</span><br></pre></td></tr></table></figure>
+<h1 id="RNN-without-transfer-learning"><a href="#RNN-without-transfer-learning" class="headerlink" title="RNN without transfer-learning"></a>RNN without transfer-learning</h1><h2 id="Features-1"><a href="#Features-1" class="headerlink" title="Features"></a>Features</h2><blockquote>
+<ul>
+<li>inception-v3 architecture</li>
+<li>freeze layers</li>
+<li>data augmentation</li>
+<li>visualization</li>
+<li>data generator</li>
+<li>test generator</li>
+</ul>
+</blockquote>
+<p>You may find the code of this part in my <a href="https://github.com/FlouriteJ" target="_blank" rel="noopener">github</a>.</p>
+<h1 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h1><p><a href="https://www.kaggle.com/toregil/welcome-to-deep-learning-cnn-99" target="_blank" rel="noopener">Welcome to deep learning (CNN 99%)</a></p>
+<p><a href="https://github.com/FlouriteJ" target="_blank" rel="noopener">@FlouriteJ</a></p>
 
       
     </div>
@@ -403,8 +448,6 @@
             <a href="/tags/keras/" rel="tag"># keras</a>
           
             <a href="/tags/CNN/" rel="tag"># CNN</a>
-          
-            <a href="/tags/mnist/" rel="tag"># mnist</a>
           
         </div>
       
@@ -512,7 +555,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-count">3</span>
                   <span class="site-state-item-name">tags</span>
                 </a>
               </div>
@@ -561,7 +604,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Environment"><span class="nav-number">1.</span> <span class="nav-text">Environment</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Introduction"><span class="nav-number">1.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Environment"><span class="nav-number">2.</span> <span class="nav-text">Environment</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#RNN-without-transfer-learning-for-beginners"><span class="nav-number">3.</span> <span class="nav-text">RNN without transfer-learning (for beginners)</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Features"><span class="nav-number">3.1.</span> <span class="nav-text">Features</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Data-Pre-processing"><span class="nav-number">3.2.</span> <span class="nav-text">Data Pre-processing</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Define-the-model"><span class="nav-number">3.3.</span> <span class="nav-text">Define the model</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Compile-and-train-the-model"><span class="nav-number">3.4.</span> <span class="nav-text">Compile and train the model</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Check-the-training-process"><span class="nav-number">3.5.</span> <span class="nav-text">Check the training process</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Predict-and-save-the-result"><span class="nav-number">3.6.</span> <span class="nav-text">Predict and save the result</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#RNN-without-transfer-learning"><span class="nav-number">4.</span> <span class="nav-text">RNN without transfer-learning</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Features-1"><span class="nav-number">4.1.</span> <span class="nav-text">Features</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Reference"><span class="nav-number">5.</span> <span class="nav-text">Reference</span></a></li></ol></div>
             
 
           </div>
@@ -764,7 +807,7 @@
     var isfetched = false;
     var isXml = true;
     // Search DB path;
-    var search_path = "";
+    var search_path = "search.xml";
     if (search_path.length === 0) {
       search_path = "search.xml";
     } else if (/json$/i.test(search_path)) {
